@@ -15,8 +15,14 @@ class Battlesnake():
       # And remove the old tail
       snake["body"].pop()
 
+      # Reduce the snake health by 1
       new_health = snake["health"] - 1
-      snake["health"] = new_health if new_health > 0 else 0
+      snake["health"] = new_health
+
+      # If the snake moved off the board we set its health to 0
+      if self.off_board(board, next_position):
+        snake["health"] = 0
+
 
 
     # At the end here we need to update the `you` property
