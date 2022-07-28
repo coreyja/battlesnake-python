@@ -1,4 +1,7 @@
 class Battlesnake():
+  # This generates a new baord from an initial board and a set of moves
+  # This does NOT remove snakes that died, it just sets their health to 0
+  # This means that the positions of the snakes MAY be off the board
   def generate_next_board(self, board, move_map):
     next_board = board.copy()
 
