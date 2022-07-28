@@ -19,6 +19,12 @@ class Battlesnake():
       new_health = snake["health"] - 1
       snake["health"] = new_health
 
+      # If the new snake head is in the hazard sauce we need to
+      # decrease the health equal to the hazard damage
+      if any(next_position == h for h in board["board"]["hazards"]):
+        new_health = snake["health"] - board["game"]["ruleset"]["settings"]["hazardDamagePerTurn"]
+        snake["health"] = new_health
+
       # If the snake ate food, we set its health to 100
       # and we duplicate the tail, so that next turn the tail
       # doesn't change locations. We also make sure to update the length
