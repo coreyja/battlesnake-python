@@ -1,8 +1,31 @@
+def move_position(position, move):
+    x = position["x"]
+    y = position["y"]
+
+    if move == "left":
+      x -= 1
+    elif move == "right":
+      x += 1
+    elif move == "up":
+      y += 1
+    elif move == "down":
+      y -= 1
+    else:
+      raise Exception("Invalid move: " + move)
+
+    return {"x": x, "y": y}
+
+def off_board(board, pos):
+    width = board["board"]["width"]
+    height = board["board"]["height"]
+
+    return pos["x"] < 0 or pos["x"] >= width or pos["y"] < 0 or pos["y"] >= height
+
 class Battlesnake():
   # This generates a new baord from an initial board and a set of moves
   # This does NOT remove snakes that died, it just sets their health to 0
   # This means that the positions of the snakes MAY be off the board
-  def generate_next_board(self, board, move_map):
+  def generate_next_board(board, move_map):
     next_board = board.copy()
 
     for snake_id in move_map:
@@ -10,7 +33,7 @@ class Battlesnake():
       snake = [s for s in next_board["board"]["snakes"] if s["id"] == snake_id][0]
 
       # First we need to figure out where the new head should be
-      next_position = self.move_position(snake["body"][0], move)
+      next_position = move_position(snake["body"][0], move)
 
       # Then we can insert the new head
       snake["body"].insert(0, next_position)
@@ -39,7 +62,7 @@ class Battlesnake():
         snake["length"] += 1
 
       # If the snake moved off the board we set its health to 0
-      if self.off_board(board, next_position):
+      if off_board(board, next_position):
         snake["health"] = 0
 
     # Now we check for collisions
@@ -106,25 +129,3 @@ class Battlesnake():
 
     return next_board
 
-  def move_position(self, position, move):
-    x = position["x"]
-    y = position["y"]
-
-    if move == "left":
-      x -= 1
-    elif move == "right":
-      x += 1
-    elif move == "up":
-      y += 1
-    elif move == "down":
-      y -= 1
-    else:
-      raise Exception("Invalid move: " + move)
-
-    return {"x": x, "y": y}
-
-  def off_board(self, board, pos):
-    width = board["board"]["width"]
-    height = board["board"]["height"]
-
-    return pos["x"] < 0 or pos["x"] >= width or pos["y"] < 0 or pos["y"] >= height
