@@ -39,7 +39,61 @@ class Battlesnake():
       if self.off_board(board, next_position):
         snake["health"] = 0
 
+    # Now we check for collisions
+    # One important thing to note, is that we do NOT mark death immediately
+    # Instead we remember which snakes died, and makr them at the end
+    # This is so there is no order depedency in the death marking and that
+    # all body colillions are counted even if the snake you ran into also
+    # collided with another snake. This means that if two snakes collide with
+    # each others bodies, both will die.
+    snake_collided = {}
+    for snake_id in [s["id"] for s in next_board["board"]["snakes"] if s["health"] > 0]:
+      snake_collided[snake_id] = False
 
+    # First we will check for head to head collisions
+    # If we find one, we will keep the longer snake alive.
+    # If both snakes are the same length, they will both die.
+    living_snake_ids = [s["id"] for s in next_board["board"]["snakes"] if s["health"] > 0]
+    for snake_id in living_snake_ids:
+      snake = [s for s in next_board["board"]["snakes"] if s["id"] == snake_id][0]
+
+      collided_with = [s for s in next_board["board"]["snakes"] if s["id"] != snake_id and s["health"] > 0 and snake["head"] == s["head"]]
+      if collided_with:
+        # If the snakes are all the same length, they will all die
+        if all([snake["length"] == s["length"] for s in collided_with]):
+          snake_collided[snake_id] = True
+        # Otherwise, we will keep the longer snake alive
+        else:
+          lengths = [s["length"] for s in collided_with]
+          lengths.append(snake["length"])
+
+          max_length = max(lengths)
+
+          # If this snakes length is not the max, it dies
+          if snake["length"] != max_length:
+            snake_collided[snake_id] = True
+
+    # Now we can check for body to body collisions
+    for snake_id in living_snake_ids:
+      snake = [s for s in next_board["board"]["snakes"] if s["id"] == snake_id][0]
+
+      for other_snake_id in [s for s in living_snake_ids if s != snake_id]:
+        other_snake = [s for s in next_board["board"]["snakes"] if s["id"] == other_snake_id][0]
+
+        # We already checked for head to head collisions, so we can
+        # only want to check the rest of the body here
+        rest_of_other_body = other_snake["body"][1:]
+
+        if snake["head"] in rest_of_other_body:
+          snake_collided[snake_id] = True
+
+    # Now that we've done all the collision detection, we can mark
+    # the snakes that died
+    for snake_id in snake_collided:
+      if not snake_collided[snake_id]:
+        continue
+      snake = [s for s in next_board["board"]["snakes"] if s["id"] == snake_id][0]
+      snake["health"] = 0
 
     # At the end here we need to update the `you` property
     # We do this by finding the correct snake in the new_board

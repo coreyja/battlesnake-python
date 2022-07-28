@@ -46,5 +46,21 @@ class TestStringMethods(unittest.TestCase):
     result = Battlesnake().generate_next_board(original, move_map)
     self.assertEqual(result, expected)
 
+  def test_head_to_head(self):
+    original = self.load_json('fixtures/simple.json')
+    expected = self.load_json('fixtures/simple_expected_head_to_head.json')
+
+    move_map = { 'Snake1':'down', 'Snake2':'left' }
+    result = Battlesnake().generate_next_board(original, move_map)
+    self.assertEqual(result, expected)
+
+  def test_double_body_collision(self):
+    original = self.load_json('fixtures/double_body_collision.json')
+    expected = self.load_json('fixtures/double_body_collision_expected.json')
+
+    move_map = { 'you':'right', 'Snake1':'left' }
+    result = Battlesnake().generate_next_board(original, move_map)
+    self.assertEqual(result, expected)
+
 if __name__ == '__main__':
     unittest.main()
