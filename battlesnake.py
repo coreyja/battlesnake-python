@@ -19,6 +19,16 @@ class Battlesnake():
       new_health = snake["health"] - 1
       snake["health"] = new_health
 
+      # If the snake ate food, we set its health to 100
+      # and we duplicate the tail, so that next turn the tail
+      # doesn't change locations. We also make sure to update the length
+      # property
+      if any([next_position == f for f in board["board"]["food"]]):
+        snake["health"] = 100
+        tail = snake["body"][-1]
+        snake["body"].append(tail)
+        snake["length"] += 1
+
       # If the snake moved off the board we set its health to 0
       if self.off_board(board, next_position):
         snake["health"] = 0

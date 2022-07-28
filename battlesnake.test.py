@@ -30,5 +30,13 @@ class TestStringMethods(unittest.TestCase):
     result = Battlesnake().generate_next_board(original, move_map)
     self.assertEqual(result, expected)
 
+  def test_ate_food(self):
+    original = self.load_json('fixtures/on_edge.json')
+    expected = self.load_json('fixtures/on_edge_expected_ate_food.json')
+
+    move_map = { 'you':'right' }
+    result = Battlesnake().generate_next_board(original, move_map)
+    self.assertEqual(result, expected)
+
 if __name__ == '__main__':
     unittest.main()
